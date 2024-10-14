@@ -20,5 +20,5 @@ public class User {
     @ManyToMany(mappedBy = "participants")
     private Set<Meeting> meetings;
 
-    // Getters and setters
+    
 }
