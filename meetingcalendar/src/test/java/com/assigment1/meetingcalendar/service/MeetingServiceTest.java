@@ -42,7 +42,7 @@ public class MeetingServiceTest {
 
     @Test
     public void testBookMeeting_noConflict_success() {
-        // Arrange
+
         MeetingRequestDTO request = new MeetingRequestDTO(LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(1L, 2L));
         Set<User> participants = Set.of(
                 User.builder().id(1L).name("User1").build(),
@@ -53,16 +53,16 @@ public class MeetingServiceTest {
         when(userRepository.findAllById(request.getParticipantIds())).thenReturn(new ArrayList<>(participants));
         when(meetingRepository.findByParticipantsInAndDate(anySet(), any(LocalDate.class))).thenReturn(Collections.emptyList());
 
-        // Act
+    
         meetingService.bookMeeting(request);
 
-        // Assert
+     
         verify(meetingRepository, times(1)).save(any(Meeting.class));
     }
 
     @Test
     public void testBookMeeting_withConflict_throwsException() {
-        // Arrange
+    
         MeetingRequestDTO request = new MeetingRequestDTO(LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(1L, 2L));
         Set<User> participants = Set.of(
                 User.builder().id(1L).name("User1").build(),
@@ -73,13 +73,13 @@ public class MeetingServiceTest {
         when(userRepository.findAllById(request.getParticipantIds())).thenReturn(new ArrayList<>(participants));
         when(meetingRepository.findByParticipantsInAndDate(anySet(), any(LocalDate.class))).thenReturn(List.of(existingMeeting));
 
-        // Act & Assert
+      
         assertThrows(IllegalArgumentException.class, () -> meetingService.bookMeeting(request));
     }
 
     @Test
     public void testFindFreeSlots_returnsAvailableSlots() {
-        // Arrange
+       
         FreeSlotDTO request = new FreeSlotDTO(LocalDate.now(), Duration.ofMinutes(30), 1L, 2L);
         User user1 =  User.builder().id(1L).name("User1").build();
         User user2 = User.builder().id(2L).name("User2").build();
@@ -88,17 +88,17 @@ public class MeetingServiceTest {
         when(userRepository.findById(request.getUser2Id())).thenReturn(Optional.of(user2));
         when(meetingRepository.findByParticipantsInAndDate(anySet(), any(LocalDate.class))).thenReturn(Collections.emptyList());
 
-        // Act
+       
         List<LocalTime> freeSlots = meetingService.findFreeSlots(request);
 
-        // Assert
+       
         assertFalse(freeSlots.isEmpty());
         assertTrue(freeSlots.contains(LocalTime.of(9, 0)));
     }
 
     @Test
     public void testFindConflictingParticipants_hasConflict() {
-        // Arrange
+      
         MeetingRequestDTO request = new MeetingRequestDTO(LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(1L));
         User user1 = User.builder().id(1L).name("User1").build();
         Meeting existingMeeting = new Meeting(1L, LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), Set.of(user1));
@@ -106,22 +106,22 @@ public class MeetingServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         when(meetingRepository.findByParticipantsInAndDate(anySet(), any(LocalDate.class))).thenReturn(List.of(existingMeeting));
 
-        // Act
+      
         List<ConflictResponseDTO> conflicts = meetingService.findConflictingParticipants(request);
 
-        // Assert
+      
         assertEquals(1, conflicts.size());
         assertTrue(conflicts.get(0).isHasConflict());
     }
 
     @Test
     public void testFindConflictingParticipants_userNotFound() {
-        // Arrange
+       
         MeetingRequestDTO request = new MeetingRequestDTO(LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(1L));
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        
         assertThrows(UserNotFoundException.class, () -> meetingService.findConflictingParticipants(request));
     }
 }
