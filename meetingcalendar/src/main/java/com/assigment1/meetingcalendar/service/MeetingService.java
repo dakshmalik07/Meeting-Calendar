@@ -63,7 +63,7 @@ public class MeetingService {
         LocalDate date = request.getDate();
         Duration duration = request.getDuration();
 
-        // Enhanced error handling
+       
         User user1 = userRepository.findById(request.getUser1Id())
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + request.getUser1Id() + " not found."));
         User user2 = userRepository.findById(request.getUser2Id())
