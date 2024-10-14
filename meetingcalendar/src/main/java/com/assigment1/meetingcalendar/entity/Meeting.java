@@ -31,5 +31,5 @@ public class Meeting {
     )
     private Set<User> participants;
 
-    // Getters and setters
+    
 }
