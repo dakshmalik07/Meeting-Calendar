@@ -15,6 +15,6 @@ public class ConflictResponseDTO {
     private Long userId;
     private boolean hasConflict;
 
-    // Constructor, getters, and setters
+    
 }
 
